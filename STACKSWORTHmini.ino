@@ -3,8 +3,7 @@
 
 // =====================================================
 // STACKSWORTHmini
-// Waveshare ESP32-C6-LCD-1.47
-// Working base + RGB rainbow
+// Option B - Card layout (lowered slightly)
 // =====================================================
 
 // -------- Colors (RGB565) --------
@@ -51,10 +50,10 @@ Arduino_GFX *gfx = new Arduino_ST7789(
 );
 
 // -------- Placeholder values --------
-String displayPrice = "$143,221";
+String displayPrice = "$943,228";
 String displayBlock = "893245";
-String displayTime  = "8:42 PM";
-String footerText   = "STACKSWORTHmini";
+String displayTime  = "10:42 PM";
+String footerText   = "STACKSWORTH.COM";
 
 // -------- RGB timing --------
 uint16_t hueValue = 0;
@@ -66,10 +65,8 @@ unsigned long lastRGBUpdate = 0;
 void updateRainbowLED() {
   if (millis() - lastRGBUpdate > 20) {
     lastRGBUpdate = millis();
-
     pixel.setPixelColor(0, pixel.gamma32(pixel.ColorHSV(hueValue)));
     pixel.show();
-
     hueValue += 256;
   }
 }
@@ -78,16 +75,16 @@ void updateRainbowLED() {
 // UI FUNCTIONS
 // =====================================================
 void drawHeader() {
-  gfx->drawRoundRect(8, 10, 156, 38, 8, ORANGE);
+  gfx->drawRoundRect(8, 18, 156, 38, 8, ORANGE);
 
   gfx->setTextColor(WHITE);
   gfx->setTextSize(2);
-  gfx->setCursor(22, 16);
+  gfx->setCursor(22, 24);
   gfx->print("STACKSWORTH");
 
   gfx->setTextColor(ORANGE);
   gfx->setTextSize(2);
-  gfx->setCursor(48, 28);
+  gfx->setCursor(78, 36);
   gfx->print("mini");
 }
 
@@ -101,15 +98,14 @@ void drawMetricCard(int x, int y, int w, int h, const char *label, const String 
   gfx->print(label);
 
   gfx->setTextColor(WHITE);
-  gfx->setTextSize(2);
-  gfx->setCursor(x + 10, y + 30);
+  gfx->setTextSize(3);
+  gfx->setCursor(x + 8, y + 30);
   gfx->print(value);
 }
 
 void drawFooter(const String &text) {
   gfx->drawFastHLine(12, 292, 148, DARKGREY);
-
-  gfx->setTextColor(GREY);
+  gfx->setTextColor(WHITE);
   gfx->setTextSize(1);
   gfx->setCursor(26, 302);
   gfx->print(text);
@@ -119,9 +115,9 @@ void drawMainScreen() {
   gfx->fillScreen(BLACK);
 
   drawHeader();
-  drawMetricCard(12, 58, 148, 64, "PRICE", displayPrice, ORANGE);
-  drawMetricCard(12, 132, 148, 64, "BLOCK", displayBlock, CYAN);
-  drawMetricCard(12, 206, 148, 64, "TIME", displayTime, WHITE);
+  drawMetricCard(8, 66, 156, 64, "PRICE", displayPrice, WHITE);
+  drawMetricCard(8, 140, 156, 64, "BLOCK", displayBlock, CYAN);
+  drawMetricCard(8, 214, 156, 64, "TIME", displayTime, BLUE);
   drawFooter(footerText);
 }
 
@@ -131,17 +127,14 @@ void drawMainScreen() {
 void setup() {
   delay(200);
 
-  // Backlight ON
   pinMode(LCD_BL, OUTPUT);
   digitalWrite(LCD_BL, HIGH);
 
-  // RGB init
   pixel.begin();
   pixel.setBrightness(40);
   pixel.clear();
   pixel.show();
 
-  // Display init
   if (!gfx->begin()) {
     while (1) {
       updateRainbowLED();
@@ -149,9 +142,7 @@ void setup() {
     }
   }
 
-  // Portrait orientation
   gfx->setRotation(0);
-
   drawMainScreen();
 }
 
